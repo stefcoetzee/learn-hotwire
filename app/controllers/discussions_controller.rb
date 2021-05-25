@@ -1,6 +1,6 @@
 class DiscussionsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_discussion, only: [:edit, :update]
+  before_action :set_discussion, only: [:edit, :update, :destroy]
 
   def index
     @discussions = Discussion.all
@@ -35,7 +35,13 @@ class DiscussionsController < ApplicationController
       end
     end
   end
-  
+
+  def destroy
+    @discussion.destroy!
+    
+    redirect_to discussions_path, notice: "Discussion removed"
+  end
+    
   private
 
     def discussion_params
