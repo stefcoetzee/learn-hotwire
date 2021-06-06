@@ -3,12 +3,12 @@ class DiscussionsController < ApplicationController
   before_action :set_discussion, only: [:show, :edit, :update, :destroy]
 
   def index
-    @discussions = Discussion.all
+    @discussions = Discussion.all.order(updated_at: :desc)
   end
 
   def show
-    
-  end  
+
+  end
 
   def new
     @discussion = Discussion.new
@@ -27,12 +27,15 @@ class DiscussionsController < ApplicationController
   end
 
   def edit
-    
+
   end
-  
+
   def update
     respond_to do |format|
       if @discussion.update(discussion_params)
+        @discussion.broadcast_replace(
+          partial: "discussions/header", locals: { discussion: @discussion }
+        )
         format.html { redirect_to @discussion, notice: "Discussion updated" }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -42,10 +45,10 @@ class DiscussionsController < ApplicationController
 
   def destroy
     @discussion.destroy!
-    
+
     redirect_to discussions_path, notice: "Discussion removed"
   end
-    
+
   private
 
     def discussion_params
@@ -54,5 +57,5 @@ class DiscussionsController < ApplicationController
 
     def set_discussion
       @discussion = Discussion.find(params[:id])
-    end    
+    end
 end
